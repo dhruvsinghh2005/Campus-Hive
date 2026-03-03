@@ -1,0 +1,13 @@
+{
+  "name": "campushive-server",
+  "version": "1.0.0",
+  "description": "CampusHive Backend",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "seed": "node seeders/adminSeeder.js"
+  },
+  "author": "KIIT Team",
+  "license": "MIT"
+}
