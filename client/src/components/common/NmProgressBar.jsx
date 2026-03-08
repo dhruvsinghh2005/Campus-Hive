@@ -1,4 +1,3 @@
-import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 
 const NmProgressBar = ({ value = 0, max = 100, label, showPercent = true, height = 10 }) => {

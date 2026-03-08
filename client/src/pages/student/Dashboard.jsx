@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FiCalendar, FiClipboard, FiAward, FiArrowRight } from "react-icons/fi";
 import { motion } from "framer-motion";

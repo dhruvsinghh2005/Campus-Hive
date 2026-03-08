@@ -97,7 +97,7 @@ const EventDetails = () => {
 
   const isFull = event.currentParticipants >= event.maxParticipants;
   const isPast = new Date(event.date) < new Date();
-  const fillPct = Math.min(100, (event.currentParticipants / event.maxParticipants) * 100);
+  
 
   return (
     <div className="sidebar-layout">
