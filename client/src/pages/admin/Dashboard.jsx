@@ -7,24 +7,9 @@ import API from "../../api/axios";
 import { useAuth } from "../../context/AuthContext";
 import AdminNavbar from "../../components/common/AdminNavbar";
 import StickyHeader from "../../components/common/StickyHeader";
+import useCountUp from "../../hooks/useCountUp";
 
 const COLORS = ["#3b82f6", "#8b5cf6", "#10b981", "#f59e0b", "#06b6d4", "#6b7280"];
-
-const useCountUp = (target, duration = 1000) => {
-  const [count, setCount] = useState(0);
-  useEffect(() => {
-    if (!target) return;
-    const start = performance.now();
-    const step = (timestamp) => {
-      const elapsed = timestamp - start;
-      const progress = Math.min(elapsed / duration, 1);
-      setCount(Math.floor(progress * target));
-      if (progress < 1) requestAnimationFrame(step);
-    };
-    requestAnimationFrame(step);
-  }, [target, duration]);
-  return count;
-};
 
 const StatCard = ({ label, value, icon, accentColor, bgColor, delay }) => {
   const count = useCountUp(value, 800);
