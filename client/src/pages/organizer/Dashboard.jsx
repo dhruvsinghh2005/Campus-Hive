@@ -5,24 +5,6 @@ import { motion } from "framer-motion";
 import API from "../../api/axios";
 import { useAuth } from "../../context/AuthContext";
 import OrganizerNavbar from "../../components/common/OrganizerNavbar";
-import StickyHeader from "../../components/common/StickyHeader";
-import useCountUp from "../../hooks/useCountUp";
-
-const StatCard = ({ icon, label, value, accentColor, delay }) => {
-  const count = useCountUp(value, 800);
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay }}
-      className="nm-flat-hover p-5"
-    >
-      <div className="mb-2" style={{ color: accentColor, fontSize: "1.25rem" }}>{icon}</div>
-      <p className="text-2xl font-bold" style={{ color: "var(--nm-text)" }}>{count}</p>
-      <p className="text-sm" style={{ color: "var(--nm-text-secondary)" }}>{label}</p>
-    </motion.div>
-  );
-};
 
 const OrganizerDashboard = () => {
   const { user } = useAuth();
@@ -67,92 +49,113 @@ const OrganizerDashboard = () => {
   };
 
   return (
-    <div className="sidebar-layout">
+    <div className="min-h-screen bg-gray-50">
       <OrganizerNavbar />
-      <div className="main-content">
-        <StickyHeader breadcrumbs={["Organizer", "Dashboard"]} />
-        <div className="px-6 pb-8">
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
-            <h2 className="text-2xl font-bold" style={{ color: "var(--nm-text)" }}>
-              Welcome, {user?.organizationName || user?.firstName || "Organizer"}! ��
-            </h2>
-            <p style={{ color: "var(--nm-text-secondary)" }}>Manage your events and track registrations</p>
+
+      <div className="max-w-6xl mx-auto p-6">
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
+          <h2 className="text-2xl font-bold text-gray-800">
+            Welcome, {user?.organizationName || user?.firstName || "Organizer"}! 🎤
+          </h2>
+          <p className="text-gray-500">Manage your events and track registrations</p>
+        </motion.div>
+
+        {/* Stats */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
+            className="bg-white rounded-xl shadow-md p-5 border-l-4 border-primary-500">
+            <FiCalendar className="text-xl text-primary-500 mb-2" />
+            <p className="text-2xl font-bold text-gray-800">{stats.total}</p>
+            <p className="text-sm text-gray-500">Total Events</p>
           </motion.div>
 
-          {/* Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-            <StatCard icon={<FiCalendar />} label="Total Events" value={stats.total} accentColor="#6366f1" delay={0.1} />
-            <StatCard icon={<FiClock />} label="Pending" value={stats.pending} accentColor="#f59e0b" delay={0.2} />
-            <StatCard icon={<FiCheckCircle />} label="Approved" value={stats.approved} accentColor="#10b981" delay={0.3} />
-            <StatCard icon={<FiXCircle />} label="Rejected" value={stats.rejected} accentColor="#ef4444" delay={0.4} />
-          </div>
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
+            className="bg-white rounded-xl shadow-md p-5 border-l-4 border-yellow-500">
+            <FiClock className="text-xl text-yellow-500 mb-2" />
+            <p className="text-2xl font-bold text-gray-800">{stats.pending}</p>
+            <p className="text-sm text-gray-500">Pending</p>
+          </motion.div>
 
-          {/* Quick Actions */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            <Link to="/organizer/create-event"
-              className="bg-gradient-to-r from-campus-accent to-red-600 text-white rounded-2xl p-6 flex items-center gap-4 hover:shadow-lg transition group">
-              <FiPlusCircle className="text-3xl" />
-              <div>
-                <h3 className="text-lg font-bold">Create New Event</h3>
-                <p className="text-sm text-white/80">Submit an event for admin approval</p>
-              </div>
-              <FiArrowRight className="ml-auto text-xl group-hover:translate-x-1 transition" />
-            </Link>
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
+            className="bg-white rounded-xl shadow-md p-5 border-l-4 border-green-500">
+            <FiCheckCircle className="text-xl text-green-500 mb-2" />
+            <p className="text-2xl font-bold text-gray-800">{stats.approved}</p>
+            <p className="text-sm text-gray-500">Approved</p>
+          </motion.div>
 
-            <Link to="/organizer/my-events"
-              className="bg-gradient-to-r from-campus-dark to-campus-light text-white rounded-2xl p-6 flex items-center gap-4 hover:shadow-lg transition group">
-              <FiList className="text-3xl" />
-              <div>
-                <h3 className="text-lg font-bold">View All Events</h3>
-                <p className="text-sm text-white/80">Manage and track your events</p>
-              </div>
-              <FiArrowRight className="ml-auto text-xl group-hover:translate-x-1 transition" />
-            </Link>
-          </div>
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
+            className="bg-white rounded-xl shadow-md p-5 border-l-4 border-red-500">
+            <FiXCircle className="text-xl text-red-500 mb-2" />
+            <p className="text-2xl font-bold text-gray-800">{stats.rejected}</p>
+            <p className="text-sm text-gray-500">Rejected</p>
+          </motion.div>
+        </div>
 
-          {/* Recent Events Table */}
-          <div className="nm-flat p-6">
-            <h3 className="text-lg font-bold mb-4" style={{ color: "var(--nm-text)" }}>📋 Recent Events</h3>
-            {loading ? (
-              <div className="flex justify-center py-10">
-                <div className="w-8 h-8 border-4 border-primary-500 border-t-transparent rounded-full animate-spin" />
-              </div>
-            ) : events.length === 0 ? (
-              <div className="text-center py-10">
-                <p className="text-4xl mb-3">📭</p>
-                <p style={{ color: "var(--nm-text-secondary)" }}>No events yet. Create your first event!</p>
-              </div>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b text-left" style={{ color: "var(--nm-text-secondary)", borderColor: "var(--nm-shadow)" }}>
-                      <th className="pb-3 font-medium">Event</th>
-                      <th className="pb-3 font-medium">Date</th>
-                      <th className="pb-3 font-medium">Category</th>
-                      <th className="pb-3 font-medium">Registrations</th>
-                      <th className="pb-3 font-medium">Status</th>
+        {/* Quick Actions */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <Link to="/organizer/create-event"
+            className="bg-gradient-to-r from-campus-accent to-red-600 text-white rounded-xl p-6 flex items-center gap-4 hover:shadow-lg transition group">
+            <FiPlusCircle className="text-3xl" />
+            <div>
+              <h3 className="text-lg font-bold">Create New Event</h3>
+              <p className="text-sm text-white/80">Submit an event for admin approval</p>
+            </div>
+            <FiArrowRight className="ml-auto text-xl group-hover:translate-x-1 transition" />
+          </Link>
+
+          <Link to="/organizer/my-events"
+            className="bg-gradient-to-r from-campus-dark to-campus-light text-white rounded-xl p-6 flex items-center gap-4 hover:shadow-lg transition group">
+            <FiList className="text-3xl" />
+            <div>
+              <h3 className="text-lg font-bold">View All Events</h3>
+              <p className="text-sm text-white/80">Manage and track your events</p>
+            </div>
+            <FiArrowRight className="ml-auto text-xl group-hover:translate-x-1 transition" />
+          </Link>
+        </div>
+
+        {/* Recent Events Table */}
+        <div className="bg-white rounded-xl shadow-md p-6">
+          <h3 className="text-lg font-bold text-gray-800 mb-4">📋 Recent Events</h3>
+          {loading ? (
+            <div className="flex justify-center py-10">
+              <div className="w-8 h-8 border-4 border-primary-500 border-t-transparent rounded-full animate-spin" />
+            </div>
+          ) : events.length === 0 ? (
+            <div className="text-center py-10">
+              <p className="text-4xl mb-3">📭</p>
+              <p className="text-gray-500">No events yet. Create your first event!</p>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b text-left text-gray-500">
+                    <th className="pb-3 font-medium">Event</th>
+                    <th className="pb-3 font-medium">Date</th>
+                    <th className="pb-3 font-medium">Category</th>
+                    <th className="pb-3 font-medium">Registrations</th>
+                    <th className="pb-3 font-medium">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {events.slice(0, 5).map((event) => (
+                    <tr key={event._id} className="border-b last:border-0 hover:bg-gray-50">
+                      <td className="py-3 font-medium text-gray-800">{event.title}</td>
+                      <td className="py-3 text-gray-600">{formatDate(event.date)}</td>
+                      <td className="py-3 capitalize text-gray-600">{event.category}</td>
+                      <td className="py-3 text-gray-600">{event.currentParticipants}/{event.maxParticipants}</td>
+                      <td className="py-3">
+                        <span className={`px-2 py-1 rounded-full text-xs font-semibold capitalize ${getStatusBadge(event.status)}`}>
+                          {event.status}
+                        </span>
+                      </td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {events.slice(0, 5).map((event) => (
-                      <tr key={event._id} className="border-b last:border-0" style={{ borderColor: "var(--nm-shadow)" }}>
-                        <td className="py-3 font-medium" style={{ color: "var(--nm-text)" }}>{event.title}</td>
-                        <td className="py-3" style={{ color: "var(--nm-text-secondary)" }}>{formatDate(event.date)}</td>
-                        <td className="py-3 capitalize" style={{ color: "var(--nm-text-secondary)" }}>{event.category}</td>
-                        <td className="py-3" style={{ color: "var(--nm-text-secondary)" }}>{event.currentParticipants}/{event.maxParticipants}</td>
-                        <td className="py-3">
-                          <span className={`px-2 py-1 rounded-full text-xs font-semibold capitalize ${getStatusBadge(event.status)}`}>
-                            {event.status}
-                          </span>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       </div>
     </div>

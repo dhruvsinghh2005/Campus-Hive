@@ -6,8 +6,6 @@ import toast from "react-hot-toast";
 import { QRCode } from "react-qr-code";
 import API from "../../api/axios";
 import Navbar from "../../components/common/Navbar";
-import StickyHeader from "../../components/common/StickyHeader";
-import NmRippleButton from "../../components/common/NmRippleButton";
 
 const MyRegistrations = () => {
   const [registrations, setRegistrations] = useState([]);
@@ -58,97 +56,101 @@ const MyRegistrations = () => {
     });
   };
 
-  return (
-    <div className="sidebar-layout">
-      <Navbar />
-      <div className="main-content">
-        <StickyHeader breadcrumbs={["Home", "My Registrations"]} />
-        <div className="px-6 pb-8">
-          <h1 className="text-2xl font-bold mb-6" style={{ color: "var(--nm-text)" }}>📋 My Registrations</h1>
-
-          {loading ? (
-            <div className="flex items-center justify-center py-32">
-              <div className="w-10 h-10 border-4 border-primary-500 border-t-transparent rounded-full animate-spin" />
-            </div>
-          ) : registrations.length === 0 ? (
-            <div className="nm-flat text-center py-20">
-              <p className="text-6xl mb-4">📭</p>
-              <h3 className="text-xl font-semibold mb-2" style={{ color: "var(--nm-text)" }}>No registrations yet</h3>
-              <p className="mb-6" style={{ color: "var(--nm-text-secondary)" }}>Browse events and register for something exciting!</p>
-              <Link to="/events" className="nm-accent-btn px-6 py-3 text-white rounded-xl font-semibold">
-                Browse Events
-              </Link>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {registrations.map((reg, index) => (
-                <motion.div
-                  key={reg._id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.05 }}
-                  className="nm-flat-hover p-6 flex flex-col md:flex-row gap-4"
-                >
-                  <div className="flex-1">
-                    <div className="flex items-start justify-between mb-2">
-                      <h3 className="text-lg font-bold" style={{ color: "var(--nm-text)" }}>{reg.event?.title || "Event Removed"}</h3>
-                      <span className={`nm-inset px-3 py-1 text-xs font-semibold capitalize ${getStatusBadge(reg.status)}`}>
-                        {reg.status.replace("_", " ")}
-                      </span>
-                    </div>
-
-                    {reg.event && (
-                      <div className="space-y-1 text-sm" style={{ color: "var(--nm-text-secondary)" }}>
-                        <p className="flex items-center gap-2">
-                          <FiCalendar className="text-primary-500" /> {formatDate(reg.event.date)}
-                        </p>
-                        <p className="flex items-center gap-2">
-                          <FiClock className="text-primary-500" /> {reg.event.startTime} - {reg.event.endTime}
-                        </p>
-                        <p className="flex items-center gap-2">
-                          <FiMapPin className="text-primary-500" /> {reg.event.venue?.name || "TBA"}
-                        </p>
-                      </div>
-                    )}
-
-                    <div className="flex gap-3 mt-4">
-                      {reg.event && (
-                        <Link
-                          to={`/events/${reg.event._id}`}
-                          className="text-sm text-primary-600 hover:text-primary-700 flex items-center gap-1"
-                        >
-                          <FiExternalLink /> View Event
-                        </Link>
-                      )}
-                      {reg.status === "registered" && (
-                        <>
-                          <button
-                            onClick={() => setSelectedQR(reg)}
-                            className="text-sm nm-button px-3 py-1.5 rounded-lg"
-                            style={{ color: "var(--nm-text)" }}
-                          >
-                            Show QR
-                          </button>
-                          <button
-                            onClick={() => handleCancel(reg._id)}
-                            className="text-sm text-red-600 hover:text-red-700 flex items-center gap-1"
-                          >
-                            <FiX /> Cancel
-                          </button>
-                        </>
-                      )}
-                      {reg.status === "attended" && (
-                        <span className="text-sm text-green-600 font-medium flex items-center gap-1">
-                          ✅ Checked In
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          )}
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Navbar />
+        <div className="flex items-center justify-center py-32">
+          <div className="w-10 h-10 border-4 border-primary-500 border-t-transparent rounded-full animate-spin" />
         </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <Navbar />
+
+      <div className="max-w-4xl mx-auto p-6">
+        <h1 className="text-2xl font-bold text-gray-800 mb-6">📋 My Registrations</h1>
+
+        {registrations.length === 0 ? (
+          <div className="text-center py-20 bg-white rounded-xl shadow-md">
+            <p className="text-6xl mb-4">📭</p>
+            <h3 className="text-xl font-semibold text-gray-700">No registrations yet</h3>
+            <p className="text-gray-500 mt-2 mb-6">Browse events and register for something exciting!</p>
+            <Link to="/events" className="bg-campus-accent text-white px-6 py-3 rounded-lg font-semibold hover:bg-red-600 transition">
+              Browse Events
+            </Link>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {registrations.map((reg, index) => (
+              <motion.div
+                key={reg._id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.05 }}
+                className="bg-white rounded-xl shadow-md p-6 flex flex-col md:flex-row gap-4"
+              >
+                <div className="flex-1">
+                  <div className="flex items-start justify-between mb-2">
+                    <h3 className="text-lg font-bold text-gray-800">{reg.event?.title || "Event Removed"}</h3>
+                    <span className={`px-3 py-1 rounded-full text-xs font-semibold capitalize ${getStatusBadge(reg.status)}`}>
+                      {reg.status.replace("_", " ")}
+                    </span>
+                  </div>
+
+                  {reg.event && (
+                    <div className="space-y-1 text-sm text-gray-600">
+                      <p className="flex items-center gap-2">
+                        <FiCalendar className="text-primary-500" /> {formatDate(reg.event.date)}
+                      </p>
+                      <p className="flex items-center gap-2">
+                        <FiClock className="text-primary-500" /> {reg.event.startTime} - {reg.event.endTime}
+                      </p>
+                      <p className="flex items-center gap-2">
+                        <FiMapPin className="text-primary-500" /> {reg.event.venue?.name || "TBA"}
+                      </p>
+                    </div>
+                  )}
+
+                  <div className="flex gap-3 mt-4">
+                    {reg.event && (
+                      <Link
+                        to={`/events/${reg.event._id}`}
+                        className="text-sm text-primary-600 hover:text-primary-700 flex items-center gap-1"
+                      >
+                        <FiExternalLink /> View Event
+                      </Link>
+                    )}
+                    {reg.status === "registered" && (
+                      <>
+                        <button
+                          onClick={() => setSelectedQR(reg)}
+                          className="text-sm bg-campus-dark text-white px-3 py-1.5 rounded-lg hover:bg-opacity-90 transition"
+                        >
+                          Show QR
+                        </button>
+                        <button
+                          onClick={() => handleCancel(reg._id)}
+                          className="text-sm text-red-600 hover:text-red-700 flex items-center gap-1"
+                        >
+                          <FiX /> Cancel
+                        </button>
+                      </>
+                    )}
+                    {reg.status === "attended" && (
+                      <span className="text-sm text-green-600 font-medium flex items-center gap-1">
+                        ✅ Checked In
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* QR Modal */}
@@ -157,11 +159,11 @@ const MyRegistrations = () => {
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="nm-flat p-8 max-w-sm w-full text-center"
+            className="bg-white rounded-2xl p-8 max-w-sm w-full text-center"
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 className="text-lg font-bold mb-2" style={{ color: "var(--nm-text)" }}>{selectedQR.event?.title}</h3>
-            <p className="text-sm mb-6" style={{ color: "var(--nm-text-secondary)" }}>Show this QR at the event entrance</p>
+            <h3 className="text-lg font-bold text-gray-800 mb-2">{selectedQR.event?.title}</h3>
+            <p className="text-sm text-gray-500 mb-6">Show this QR at the event entrance</p>
             <div className="flex justify-center mb-6">
               <QRCode
                 value={JSON.stringify({
@@ -172,9 +174,12 @@ const MyRegistrations = () => {
                 size={200}
               />
             </div>
-            <NmRippleButton variant="flat" onClick={() => setSelectedQR(null)}>
+            <button
+              onClick={() => setSelectedQR(null)}
+              className="bg-gray-100 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-200 transition"
+            >
               Close
-            </NmRippleButton>
+            </button>
           </motion.div>
         </div>
       )}

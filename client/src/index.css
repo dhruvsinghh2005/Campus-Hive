@@ -2,28 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ============================================================
-   CSS CUSTOM PROPERTIES — NEUMORPHIC DESIGN TOKENS
-   ============================================================ */
-:root {
-  --nm-bg: #e0e5ec;
-  --nm-shadow: #a3b1c6;
-  --nm-highlight: #ffffff;
-  --nm-text: #2d3748;
-  --nm-text-secondary: #718096;
-}
-
-.dark {
-  --nm-bg: #1e2030;
-  --nm-shadow: #14152a;
-  --nm-highlight: #2a2d42;
-  --nm-text: #e2e8f0;
-  --nm-text-secondary: #a0aec0;
-}
-
-/* ============================================================
-   GLOBAL BASE
-   ============================================================ */
 * {
   margin: 0;
   padding: 0;
@@ -31,164 +9,24 @@
 }
 
 body {
-  font-family: 'Satoshi', system-ui, -apple-system, sans-serif;
-  background-color: var(--nm-bg);
-  color: var(--nm-text);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
   min-height: 100vh;
-  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-h1, h2, h3, h4, h5, h6 {
-  font-family: 'General Sans', system-ui, sans-serif;
-  letter-spacing: -0.02em;
-}
-
-/* ============================================================
-   NEUMORPHIC UTILITY CLASSES
-   ============================================================ */
-.nm-flat {
-  background: var(--nm-bg);
-  box-shadow: 6px 6px 12px var(--nm-shadow), -6px -6px 12px var(--nm-highlight);
-  border-radius: 16px;
-}
-
-.nm-inset {
-  background: var(--nm-bg);
-  box-shadow: inset 4px 4px 8px var(--nm-shadow), inset -4px -4px 8px var(--nm-highlight);
-  border-radius: 12px;
-}
-
-.nm-flat-hover {
-  background: var(--nm-bg);
-  box-shadow: 6px 6px 12px var(--nm-shadow), -6px -6px 12px var(--nm-highlight);
-  border-radius: 16px;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.nm-flat-hover:hover {
-  transform: scale(1.02) translateY(-4px);
-  box-shadow: 8px 8px 16px var(--nm-shadow), -8px -8px 16px var(--nm-highlight);
-}
-
-.nm-button {
-  background: var(--nm-bg);
-  box-shadow: 4px 4px 8px var(--nm-shadow), -4px -4px 8px var(--nm-highlight);
-  border-radius: 12px;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  overflow: hidden;
-}
-.nm-button:hover {
-  transform: scale(1.02);
-}
-.nm-button:active {
-  box-shadow: inset 2px 2px 4px var(--nm-shadow), inset -2px -2px 4px var(--nm-highlight);
-}
-
-/* ============================================================
-   KEYFRAME ANIMATIONS
-   ============================================================ */
-@keyframes floatBob {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-5px); }
-}
-
-@keyframes waveShimmer {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
-}
-
-@keyframes glowPulse {
-  0%, 100% { filter: drop-shadow(0 0 4px currentColor); }
-  50% { filter: drop-shadow(0 0 12px currentColor); }
-}
-
-@keyframes cursorBlink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
-}
-
-@keyframes slideIn {
-  from { opacity: 0; transform: translateX(-10px); }
-  to { opacity: 1; transform: translateX(0); }
-}
-
-@keyframes rippleEffect {
-  to { transform: scale(4); opacity: 0; }
-}
-
-/* ============================================================
-   SCROLLBAR STYLING
-   ============================================================ */
+/* Scrollbar styling */
 ::-webkit-scrollbar {
   width: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--nm-bg);
+  background: #f1f1f1;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--nm-shadow);
+  background: #888;
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--nm-text-secondary);
-}
-
-/* ============================================================
-   INPUT & SELECT BASE OVERRIDES (neumorphic inset)
-   ============================================================ */
-.nm-input {
-  background: var(--nm-bg);
-  box-shadow: inset 4px 4px 8px var(--nm-shadow), inset -4px -4px 8px var(--nm-highlight);
-  border-radius: 12px;
-  border: none;
-  outline: none;
-  color: var(--nm-text);
-  transition: box-shadow 0.2s ease;
-}
-
-.nm-input:focus {
-  box-shadow: inset 5px 5px 10px var(--nm-shadow), inset -5px -5px 10px var(--nm-highlight), 0 0 0 2px #6366f1;
-}
-
-.nm-input::placeholder {
-  color: var(--nm-text-secondary);
-}
-
-/* ============================================================
-   GRADIENT ACCENT BUTTON
-   ============================================================ */
-.nm-accent-btn {
-  background: linear-gradient(135deg, #6366f1, #a78bfa);
-  border-radius: 12px;
-  color: #ffffff;
-  font-weight: 600;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  overflow: hidden;
-  box-shadow: 4px 4px 12px rgba(99, 102, 241, 0.4), -2px -2px 8px var(--nm-highlight);
-}
-.nm-accent-btn:hover {
-  transform: scale(1.02) translateY(-1px);
-  box-shadow: 6px 6px 16px rgba(99, 102, 241, 0.5), -2px -2px 8px var(--nm-highlight);
-}
-.nm-accent-btn:active {
-  transform: scale(0.98);
-}
-
-/* ============================================================
-   SIDEBAR LAYOUT HELPERS
-   ============================================================ */
-.sidebar-layout {
-  display: flex;
-  min-height: 100vh;
-  background-color: var(--nm-bg);
-}
-
-.main-content {
-  flex: 1;
-  min-height: 100vh;
-  overflow-y: auto;
+  background: #555;
 }
