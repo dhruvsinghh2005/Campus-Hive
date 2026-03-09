@@ -5,7 +5,6 @@ import { motion } from "framer-motion";
 import toast from "react-hot-toast";
 import API from "../../api/axios";
 import { useAuth } from "../../context/AuthContext";
-import NmRippleButton from "../../components/common/NmRippleButton";
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
@@ -25,6 +24,7 @@ const Login = () => {
       if (data.success) {
         login(data.data.token, data.data);
         toast.success("Login successful!");
+        // Redirect based on role
         const role = data.data.role;
         if (role === "admin") navigate("/admin/dashboard");
         else if (role === "organizer") navigate("/organizer/dashboard");
@@ -38,30 +38,27 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4" style={{ background: "var(--nm-bg)" }}>
+    <div className="min-h-screen bg-gradient-to-br from-campus-dark via-campus-mid to-campus-light flex items-center justify-center p-4">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="nm-flat p-8 w-full max-w-md"
+        className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md"
       >
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="nm-inset w-20 h-20 mx-auto flex items-center justify-center text-4xl mb-4 rounded-2xl">
-            🎓
-          </div>
-          <h1 className="text-3xl font-bold" style={{ color: "var(--nm-text)" }}>
-            CampusHive
+          <h1 className="text-3xl font-bold text-campus-dark">
+            🎓 CampusHive
           </h1>
-          <p className="mt-2" style={{ color: "var(--nm-text-secondary)" }}>Welcome back! Sign in to continue</p>
+          <p className="text-gray-500 mt-2">Welcome back! Sign in to continue</p>
         </div>
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label className="block text-sm font-medium mb-1.5" style={{ color: "var(--nm-text)" }}>Email</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
             <div className="relative">
-              <FiMail className="absolute left-4 top-1/2 -translate-y-1/2 text-sm" style={{ color: "var(--nm-text-secondary)" }} />
+              <FiMail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
               <input
                 type="email"
                 name="email"
@@ -69,15 +66,15 @@ const Login = () => {
                 onChange={handleChange}
                 placeholder="your.email@kiit.ac.in"
                 required
-                className="nm-input w-full pl-10 pr-4 py-3 text-sm"
+                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition text-gray-800"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1.5" style={{ color: "var(--nm-text)" }}>Password</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
             <div className="relative">
-              <FiLock className="absolute left-4 top-1/2 -translate-y-1/2 text-sm" style={{ color: "var(--nm-text-secondary)" }} />
+              <FiLock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
               <input
                 type="password"
                 name="password"
@@ -85,28 +82,36 @@ const Login = () => {
                 onChange={handleChange}
                 placeholder="••••••••"
                 required
-                className="nm-input w-full pl-10 pr-4 py-3 text-sm"
+                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition text-gray-800"
               />
             </div>
           </div>
 
-          <NmRippleButton
+          <div className="flex justify-end">
+            <Link to="/forgot-password" className="text-sm text-primary-600 hover:text-primary-700">
+              Forgot Password?
+            </Link>
+          </div>
+
+          <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 flex items-center justify-center gap-2"
+            className="w-full bg-campus-accent hover:bg-red-600 text-white font-semibold py-3 rounded-lg flex items-center justify-center gap-2 transition disabled:opacity-50"
           >
             {loading ? (
               <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
             ) : (
-              <><FiLogIn /> Sign In</>
+              <>
+                <FiLogIn /> Sign In
+              </>
             )}
-          </NmRippleButton>
+          </button>
         </form>
 
         {/* Register link */}
-        <p className="text-center mt-6 text-sm" style={{ color: "var(--nm-text-secondary)" }}>
-          Don&apos;t have an account?{" "}
-          <Link to="/register" className="text-indigo-500 font-semibold hover:text-indigo-600">
+        <p className="text-center mt-6 text-gray-600">
+          Don't have an account?{" "}
+          <Link to="/register" className="text-primary-600 font-semibold hover:text-primary-700">
             Sign Up
           </Link>
         </p>

@@ -5,33 +5,6 @@ import { motion } from "framer-motion";
 import API from "../../api/axios";
 import { useAuth } from "../../context/AuthContext";
 import Navbar from "../../components/common/Navbar";
-import StickyHeader from "../../components/common/StickyHeader";
-import useCountUp from "../../hooks/useCountUp";
-
-const StatCard = ({ icon, label, value, color, delay }) => {
-  const count = useCountUp(value, 800);
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay }}
-      className="nm-flat-hover p-6"
-    >
-      <div className="flex items-start justify-between">
-        <div
-          className="nm-inset w-12 h-12 flex items-center justify-center text-xl animate-float-bob"
-          style={{ color }}
-        >
-          {icon}
-        </div>
-      </div>
-      <div className="mt-4">
-        <p className="text-3xl font-bold" style={{ color: "var(--nm-text)" }}>{count}</p>
-        <p className="text-sm mt-1" style={{ color: "var(--nm-text-secondary)" }}>{label}</p>
-      </div>
-    </motion.div>
-  );
-};
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -69,83 +42,96 @@ const Dashboard = () => {
     });
   };
 
-  const getCategoryColor = (cat) => {
-    const colors = {
-      technical: "#3b82f6",
-      cultural: "#8b5cf6",
-      sports: "#10b981",
-      workshop: "#f59e0b",
-      seminar: "#06b6d4",
-      other: "#6b7280",
-    };
-    return colors[cat] || colors.other;
-  };
-
   return (
-    <div className="sidebar-layout">
+    <div className="min-h-screen bg-gray-50">
       <Navbar />
 
-      <div className="main-content">
-        <StickyHeader breadcrumbs={["Home", "Dashboard"]} />
+      <div className="max-w-6xl mx-auto p-6">
+        {/* Welcome */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-8"
+        >
+          <h2 className="text-2xl font-bold text-gray-800">
+            Welcome back, {user?.firstName || "Student"}! 👋
+          </h2>
+          <p className="text-gray-500">Here's what's happening on campus</p>
+        </motion.div>
 
-        <div className="px-6 pb-8">
-          {/* Welcome */}
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-8"
-          >
-            <h2 className="text-2xl font-bold" style={{ color: "var(--nm-text)" }}>
-              Welcome back, {user?.firstName || "Student"}! 👋
-            </h2>
-            <p style={{ color: "var(--nm-text-secondary)" }}>Here&apos;s what&apos;s happening on campus</p>
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
+            className="bg-white rounded-xl shadow-md p-6 border-l-4 border-primary-500">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center">
+                <FiCalendar className="text-xl text-primary-500" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">Upcoming Events</p>
+                <p className="text-2xl font-bold text-gray-800">{stats.upcoming}</p>
+              </div>
+            </div>
           </motion.div>
 
-          {/* Stats Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
-            <StatCard icon={<FiCalendar />} label="Upcoming Events" value={stats.upcoming} color="#6366f1" delay={0.1} />
-            <StatCard icon={<FiClipboard />} label="Registered Events" value={stats.registrations} color="#10b981" delay={0.2} />
-            <StatCard icon={<FiAward />} label="Certificates" value={0} color="#f59e0b" delay={0.3} />
-          </div>
-
-          {/* Recent Events */}
-          <div className="nm-flat p-6">
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="text-lg font-bold" style={{ color: "var(--nm-text)" }}>🎪 Recent Events</h3>
-              <Link to="/events" className="text-indigo-500 text-sm font-medium flex items-center gap-1 hover:text-indigo-600">
-                View All <FiArrowRight />
-              </Link>
-            </div>
-
-            {recentEvents.length === 0 ? (
-              <p className="text-center py-8" style={{ color: "var(--nm-text-secondary)" }}>No events available yet. Check back soon!</p>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {recentEvents.map((event, i) => (
-                  <motion.div
-                    key={event._id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: i * 0.05 }}
-                  >
-                    <Link to={`/events/${event._id}`} className="block nm-flat-hover p-4">
-                      <h4 className="font-semibold line-clamp-1 mb-1" style={{ color: "var(--nm-text)" }}>
-                        {event.title}
-                      </h4>
-                      <p className="text-sm mb-1" style={{ color: "var(--nm-text-secondary)" }}>{formatDate(event.date)} • {event.startTime}</p>
-                      <p className="text-sm mb-2" style={{ color: "var(--nm-text-secondary)" }}>{event.venue?.name || "TBA"}</p>
-                      <span
-                        className="inline-block text-xs px-2 py-1 rounded-full font-medium capitalize text-white"
-                        style={{ background: getCategoryColor(event.category) }}
-                      >
-                        {event.category}
-                      </span>
-                    </Link>
-                  </motion.div>
-                ))}
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
+            className="bg-white rounded-xl shadow-md p-6 border-l-4 border-green-500">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                <FiClipboard className="text-xl text-green-500" />
               </div>
-            )}
+              <div>
+                <p className="text-sm text-gray-500">Registered Events</p>
+                <p className="text-2xl font-bold text-gray-800">{stats.registrations}</p>
+              </div>
+            </div>
+          </motion.div>
+
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
+            className="bg-white rounded-xl shadow-md p-6 border-l-4 border-campus-accent">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
+                <FiAward className="text-xl text-campus-accent" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">Certificates</p>
+                <p className="text-2xl font-bold text-gray-800">0</p>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Recent Events */}
+        <div className="bg-white rounded-xl shadow-md p-6">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-lg font-bold text-gray-800">🎪 Recent Events</h3>
+            <Link to="/events" className="text-primary-600 text-sm font-medium flex items-center gap-1 hover:text-primary-700">
+              View All <FiArrowRight />
+            </Link>
           </div>
+
+          {recentEvents.length === 0 ? (
+            <p className="text-gray-500 text-center py-8">No events available yet. Check back soon!</p>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {recentEvents.map((event) => (
+                <Link
+                  key={event._id}
+                  to={`/events/${event._id}`}
+                  className="border rounded-lg p-4 hover:shadow-md transition group"
+                >
+                  <h4 className="font-semibold text-gray-800 group-hover:text-primary-600 line-clamp-1">
+                    {event.title}
+                  </h4>
+                  <p className="text-sm text-gray-500 mt-1">{formatDate(event.date)} • {event.startTime}</p>
+                  <p className="text-sm text-gray-500">{event.venue?.name || "TBA"}</p>
+                  <span className="inline-block mt-2 text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full capitalize">
+                    {event.category}
+                  </span>
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>

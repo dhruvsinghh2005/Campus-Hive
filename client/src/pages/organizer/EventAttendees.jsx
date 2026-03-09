@@ -5,8 +5,6 @@ import { motion } from "framer-motion";
 import toast from "react-hot-toast";
 import API from "../../api/axios";
 import OrganizerNavbar from "../../components/common/OrganizerNavbar";
-import StickyHeader from "../../components/common/StickyHeader";
-import NmRippleButton from "../../components/common/NmRippleButton";
 
 const EventAttendees = () => {
   const { eventId } = useParams();
@@ -100,143 +98,140 @@ const EventAttendees = () => {
   const registeredCount = attendees.filter((a) => a.status === "registered").length;
 
   return (
-    <div className="sidebar-layout">
+    <div className="min-h-screen bg-gray-50">
       <OrganizerNavbar />
-      <div className="main-content">
-        <StickyHeader breadcrumbs={["Organizer", "Event Attendees"]} />
-        <div className="px-6 pb-8">
-          {/* Header */}
-          <div className="flex flex-wrap justify-between items-start gap-4 mb-6">
-            <div>
-              <Link to="/organizer/my-events" className="text-primary-600 hover:text-primary-700 text-sm flex items-center gap-1 mb-2">
-                <FiArrowLeft /> Back to My Events
-              </Link>
-              <h1 className="text-2xl font-bold" style={{ color: "var(--nm-text)" }}>👥 {event?.title || "Event"} — Attendees</h1>
-            </div>
-            <div className="flex gap-2 flex-wrap">
-              <Link to={`/organizer/scan/${eventId}`}>
-                <NmRippleButton className="text-sm py-2.5 flex items-center gap-2">
-                  <FiCamera /> Scan QR
-                </NmRippleButton>
-              </Link>
-              <NmRippleButton onClick={generateAllCertificates} className="text-sm py-2.5 flex items-center gap-2">
-                <FiAward /> Generate All Certificates
-              </NmRippleButton>
-              <NmRippleButton onClick={exportCSV} variant="flat" className="text-sm py-2.5 flex items-center gap-2">
-                <FiDownload /> Export CSV
-              </NmRippleButton>
-            </div>
+
+      <div className="max-w-6xl mx-auto p-6">
+        {/* Header */}
+        <div className="flex flex-wrap justify-between items-start gap-4 mb-6">
+          <div>
+            <Link to="/organizer/my-events" className="text-primary-600 hover:text-primary-700 text-sm flex items-center gap-1 mb-2">
+              <FiArrowLeft /> Back to My Events
+            </Link>
+            <h1 className="text-2xl font-bold text-gray-800">👥 {event?.title || "Event"} — Attendees</h1>
           </div>
-
-          {loading ? (
-            <div className="flex justify-center py-20">
-              <div className="w-10 h-10 border-4 border-primary-500 border-t-transparent rounded-full animate-spin" />
-            </div>
-          ) : (
-            <>
-              {/* Stats */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                {[
-                  { label: "Total Registered", value: attendees.length, color: "#3b82f6" },
-                  { label: "Checked In", value: attendedCount, color: "#10b981" },
-                  { label: "Pending", value: registeredCount, color: "#f59e0b" },
-                  { label: "Attendance %", value: attendees.length > 0 ? `${Math.round((attendedCount / attendees.length) * 100)}%` : "0%", color: "#8b5cf6" },
-                ].map((stat) => (
-                  <div key={stat.label} className="nm-flat-hover p-4">
-                    <p className="text-2xl font-bold" style={{ color: stat.color }}>{stat.value}</p>
-                    <p className="text-xs" style={{ color: "var(--nm-text-secondary)" }}>{stat.label}</p>
-                  </div>
-                ))}
-              </div>
-
-              {/* Filters */}
-              <div className="flex gap-2 mb-4">
-                {["all", "registered", "attended", "cancelled"].map((f) => (
-                  <button key={f} onClick={() => setFilter(f)}
-                    className={`px-4 py-2 rounded-lg text-sm font-medium capitalize transition ${
-                      filter === f ? "nm-inset font-semibold" : "nm-button"
-                    }`}
-                    style={{ color: "var(--nm-text)" }}>
-                    {f} {f !== "all" && `(${attendees.filter((a) => a.status === f).length})`}
-                  </button>
-                ))}
-              </div>
-
-              {/* Table */}
-              {filtered.length === 0 ? (
-                <div className="nm-flat text-center py-16">
-                  <p className="text-4xl mb-3">📋</p>
-                  <p style={{ color: "var(--nm-text-secondary)" }}>No attendees found</p>
-                </div>
-              ) : (
-                <div className="nm-flat overflow-hidden">
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
-                      <thead>
-                        <tr className="nm-inset text-left" style={{ color: "var(--nm-text-secondary)" }}>
-                          <th className="px-6 py-4 font-medium">#</th>
-                          <th className="px-6 py-4 font-medium">Student</th>
-                          <th className="px-6 py-4 font-medium">Email</th>
-                          <th className="px-6 py-4 font-medium">Department</th>
-                          <th className="px-6 py-4 font-medium">Status</th>
-                          <th className="px-6 py-4 font-medium">Checked In</th>
-                          <th className="px-6 py-4 font-medium">Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {filtered.map((reg, index) => (
-                          <motion.tr key={reg._id}
-                            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: index * 0.02 }}
-                            className="border-b last:border-0 hover:opacity-90 transition"
-                            style={{ borderColor: "var(--nm-shadow)" }}>
-                            <td className="px-6 py-4" style={{ color: "var(--nm-text-secondary)" }}>{index + 1}</td>
-                            <td className="px-6 py-4">
-                              <div className="flex items-center gap-2">
-                                <div className="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center text-primary-600 font-bold text-xs">
-                                  {reg.student?.firstName?.[0]}{reg.student?.lastName?.[0]}
-                                </div>
-                                <div>
-                                  <p className="font-medium" style={{ color: "var(--nm-text)" }}>{reg.student?.firstName} {reg.student?.lastName}</p>
-                                  <p className="text-xs" style={{ color: "var(--nm-text-secondary)" }}>{reg.student?.enrollmentNo}</p>
-                                </div>
-                              </div>
-                            </td>
-                            <td className="px-6 py-4" style={{ color: "var(--nm-text-secondary)" }}>{reg.student?.email}</td>
-                            <td className="px-6 py-4" style={{ color: "var(--nm-text-secondary)" }}>{reg.student?.department} — Y{reg.student?.year}</td>
-                            <td className="px-6 py-4">
-                              <span className={`px-2 py-1 rounded-full text-xs font-semibold capitalize ${getStatusBadge(reg.status)}`}>
-                                {reg.status}
-                              </span>
-                            </td>
-                            <td className="px-6 py-4 text-xs" style={{ color: "var(--nm-text-secondary)" }}>
-                              {reg.checkedInAt ? new Date(reg.checkedInAt).toLocaleString("en-IN") : "—"}
-                            </td>
-                            <td className="px-6 py-4">
-                              {reg.status === "attended" && (
-                                <button
-                                  onClick={() => generateCertificate(reg.student._id)}
-                                  disabled={generatingCert === reg.student._id}
-                                  className="text-primary-600 hover:text-primary-700 text-xs font-medium flex items-center gap-1 disabled:opacity-50"
-                                >
-                                  {generatingCert === reg.student._id ? (
-                                    <div className="w-3 h-3 border-2 border-primary-500 border-t-transparent rounded-full animate-spin" />
-                                  ) : (
-                                    <FiAward />
-                                  )}
-                                  Certificate
-                                </button>
-                              )}
-                            </td>
-                          </motion.tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              )}
-            </>
-          )}
+          <div className="flex gap-2">
+            <Link to={`/organizer/scan/${eventId}`}
+              className="bg-campus-accent hover:bg-red-600 text-white px-4 py-2.5 rounded-lg font-semibold text-sm flex items-center gap-2 transition">
+              <FiCamera /> Scan QR
+            </Link>
+            <button onClick={generateAllCertificates}
+              className="bg-primary-500 hover:bg-primary-600 text-white px-4 py-2.5 rounded-lg font-semibold text-sm flex items-center gap-2 transition">
+              <FiAward /> Generate All Certificates
+            </button>
+            <button onClick={exportCSV}
+              className="bg-green-500 hover:bg-green-600 text-white px-4 py-2.5 rounded-lg font-semibold text-sm flex items-center gap-2 transition">
+              <FiDownload /> Export CSV
+            </button>
+          </div>
         </div>
+
+        {loading ? (
+          <div className="flex justify-center py-20">
+            <div className="w-10 h-10 border-4 border-primary-500 border-t-transparent rounded-full animate-spin" />
+          </div>
+        ) : (
+          <>
+            {/* Stats */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+              {[
+                { label: "Total Registered", value: attendees.length, color: "border-blue-500" },
+                { label: "Checked In", value: attendedCount, color: "border-green-500" },
+                { label: "Pending", value: registeredCount, color: "border-yellow-500" },
+                { label: "Attendance %", value: attendees.length > 0 ? `${Math.round((attendedCount / attendees.length) * 100)}%` : "0%", color: "border-purple-500" },
+              ].map((stat) => (
+                <div key={stat.label} className={`bg-white rounded-xl shadow-md p-4 border-l-4 ${stat.color}`}>
+                  <p className="text-2xl font-bold text-gray-800">{stat.value}</p>
+                  <p className="text-xs text-gray-500">{stat.label}</p>
+                </div>
+              ))}
+            </div>
+
+            {/* Filters */}
+            <div className="flex gap-2 mb-4">
+              {["all", "registered", "attended", "cancelled"].map((f) => (
+                <button key={f} onClick={() => setFilter(f)}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium capitalize transition ${
+                    filter === f ? "bg-campus-dark text-white" : "bg-white text-gray-600 hover:bg-gray-100 border"
+                  }`}>
+                  {f} {f !== "all" && `(${attendees.filter((a) => a.status === f).length})`}
+                </button>
+              ))}
+            </div>
+
+            {/* Table */}
+            {filtered.length === 0 ? (
+              <div className="text-center py-16 bg-white rounded-xl shadow-md">
+                <p className="text-4xl mb-3">📋</p>
+                <p className="text-gray-500">No attendees found</p>
+              </div>
+            ) : (
+              <div className="bg-white rounded-xl shadow-md overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="bg-gray-50 border-b text-left text-gray-500">
+                        <th className="px-6 py-4 font-medium">#</th>
+                        <th className="px-6 py-4 font-medium">Student</th>
+                        <th className="px-6 py-4 font-medium">Email</th>
+                        <th className="px-6 py-4 font-medium">Department</th>
+                        <th className="px-6 py-4 font-medium">Status</th>
+                        <th className="px-6 py-4 font-medium">Checked In</th>
+                        <th className="px-6 py-4 font-medium">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filtered.map((reg, index) => (
+                        <motion.tr key={reg._id}
+                          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: index * 0.02 }}
+                          className="border-b last:border-0 hover:bg-gray-50">
+                          <td className="px-6 py-4 text-gray-500">{index + 1}</td>
+                          <td className="px-6 py-4">
+                            <div className="flex items-center gap-2">
+                              <div className="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center text-primary-600 font-bold text-xs">
+                                {reg.student?.firstName?.[0]}{reg.student?.lastName?.[0]}
+                              </div>
+                              <div>
+                                <p className="font-medium text-gray-800">{reg.student?.firstName} {reg.student?.lastName}</p>
+                                <p className="text-xs text-gray-500">{reg.student?.enrollmentNo}</p>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 text-gray-600">{reg.student?.email}</td>
+                          <td className="px-6 py-4 text-gray-600">{reg.student?.department} — Y{reg.student?.year}</td>
+                          <td className="px-6 py-4">
+                            <span className={`px-2 py-1 rounded-full text-xs font-semibold capitalize ${getStatusBadge(reg.status)}`}>
+                              {reg.status}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 text-gray-500 text-xs">
+                            {reg.checkedInAt ? new Date(reg.checkedInAt).toLocaleString("en-IN") : "—"}
+                          </td>
+                          <td className="px-6 py-4">
+                            {reg.status === "attended" && (
+                              <button
+                                onClick={() => generateCertificate(reg.student._id)}
+                                disabled={generatingCert === reg.student._id}
+                                className="text-primary-600 hover:text-primary-700 text-xs font-medium flex items-center gap-1 disabled:opacity-50"
+                              >
+                                {generatingCert === reg.student._id ? (
+                                  <div className="w-3 h-3 border-2 border-primary-500 border-t-transparent rounded-full animate-spin" />
+                                ) : (
+                                  <FiAward />
+                                )}
+                                Certificate
+                              </button>
+                            )}
+                          </td>
+                        </motion.tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+          </>
+        )}
       </div>
     </div>
   );
